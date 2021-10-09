@@ -31,5 +31,5 @@ def fkine_ur5(q):
     T5 = 0
     T6 = 0
     # Efector final con respecto a la base
-    T = 0
+    T = np.zeros((4,4))
     return T
