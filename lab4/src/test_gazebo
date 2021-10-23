@@ -30,7 +30,7 @@ if __name__ == '__main__':
     robot_client.wait_for_result()
     rospy.sleep(1)
     
-    rate = rospy.Rate(100)
+    rate = rospy.Rate(10)
     while not rospy.is_shutdown():
         robot_client.cancel_goal()
 
