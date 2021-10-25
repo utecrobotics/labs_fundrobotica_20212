@@ -1,0 +1,81 @@
+#!/usr/bin/env python
+#
+
+from __future__ import print_function
+import rospy
+from sensor_msgs.msg import JointState
+
+from markers import *
+from lab5functions import *
+
+
+# Initialize the node
+rospy.init_node("testKineControlPose")
+print('starting motion ... ')
+# Publisher: publish to the joint_states topic
+pub = rospy.Publisher('joint_states', JointState, queue_size=1000)
+# Markers for the current and desired positions
+bmarker_current  = FrameMarker()
+bmarker_desired = FrameMarker(0.5)
+
+# Joint names
+jnames = ['shoulder_pan_joint', 'shoulder_lift_joint', 'elbow_joint',
+          'wrist_1_joint', 'wrist_2_joint', 'wrist_3_joint']
+
+# Desired pose
+ang = pi/3
+Rd = np.array([[0,1,0],[1,0,0],[0,0,-1]])
+qd = rot2quat(Rd)
+# Find an xd that the robot can reach
+xd = np.array([0.4, 0.4, 0.4, qd[0], qd[1], qd[2], qd[3]])
+#xd  = np.array([0.5, 0.5, 0.6, np.cos(ang/2.0), 0, 0, np.sin(ang/2.0)])
+# Initial configuration
+q0  = np.array([0.0, -1.0, 1.7, -2.2, -1.6, 0.0])
+
+# Resulting initial pose (end effector with respect to the base link)
+T = fkine(q0)
+x0 = TF2xyzquat(T)
+
+# Markers for the current and the desired pose
+bmarker_current.setPose(x0)
+bmarker_desired.setPose(xd)
+
+# Instance of the JointState message
+jstate = JointState()
+# Values of the message
+jstate.header.stamp = rospy.Time.now()
+jstate.name = jnames
+# Add the head joint value (with value 0) to the joints
+jstate.position = q0
+
+# Frequency (in Hz) and control period 
+freq = 200
+dt = 1.0/freq
+rate = rospy.Rate(freq)
+
+# Initial joint configuration
+q = copy(q0)
+x = copy(x0)
+quat = x[3:7]
+# Initialize the derror vector (derivative of the error)
+derror = np.zeros(7)
+# Main loop
+#for i in range(1):
+while not rospy.is_shutdown():
+    # Current time (needed for ROS)
+    jstate.header.stamp = rospy.Time.now()
+    # Kinematic control law for the pose (complete here)
+    # --------------------------------------------------
+
+    q = 
+
+    # Current configuration trnaformation to current position
+    T = fkine(q)
+    x = TF2xyzquat(T)
+    # Publish the message
+    jstate.position = q
+    pub.publish(jstate)
+    bmarker_desired.setPose(xd)
+    bmarker_current.setPose(x)
+    # Wait for the next iteration
+    rate.sleep()
