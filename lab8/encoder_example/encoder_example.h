@@ -23,5 +23,5 @@ unsigned long tTime[4];
 
 /********* Publishers *********/
 
-//std_msgs::Float32 encoder;
+//std_msgs::Float32 encoder_msg;
 //ros::Publisher encoder("encoder", &encoder_msg);
